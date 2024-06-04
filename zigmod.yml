@@ -1,0 +1,7 @@
+id: 7l3oxw6nqqws638zsz6w1kiexnyi1yqevu0mgybmlods5i1d
+name: intrusive-parser
+main: intrusive_parser.zig
+license: MPL-2.0
+description: Core plumbing to make text or binary document parsers with Data Oriented Design
+dependencies:
+  - src: git https://github.com/nektro/zig-extras
