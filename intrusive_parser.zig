@@ -104,6 +104,18 @@ pub const Parser = struct {
         return p.slice()[0..n].*;
     }
 
+    pub fn trimByte(p: *Parser, test_c: u8) !usize {
+        var amt: usize = 0;
+        while (true) {
+            const s = p.slice();
+            if (s.len == 0) break;
+            if (s[0] != test_c) break;
+            p.idx += 1;
+            amt += 1;
+        }
+        return amt;
+    }
+
     // tag(u8) + len(u32) + bytes(N)
     pub fn addStr(p: *Parser, alloc: std.mem.Allocator, str: string) !usize {
         const adapter: AdapterStr = .{ .p = p };
@@ -176,6 +188,10 @@ pub fn Mixin(comptime T: type) type {
 
         pub fn shiftBytesN(pp: *T, comptime n: usize) ![n]u8 {
             return pp.parser.shiftBytesN(n);
+        }
+
+        pub fn trimByte(pp: *T, test_c: u8) !usize {
+            return pp.parser.trimByte(test_c);
         }
     };
 }
