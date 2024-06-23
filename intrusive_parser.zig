@@ -154,7 +154,7 @@ pub fn Mixin(comptime T: type) type {
             return pp.parser.eat(test_s);
         }
 
-        fn peekAmt(pp: *T, amt: usize) !?void {
+        pub fn peekAmt(pp: *T, amt: usize) !?void {
             return pp.parser.peekAmt(amt);
         }
 
