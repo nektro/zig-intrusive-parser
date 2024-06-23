@@ -116,20 +116,18 @@ pub const Parser = struct {
         return amt;
     }
 
-    pub fn eatUntil(p: *Parser, test_c: u8) !?struct { usize, usize } {
+    pub fn eatUntil(p: *Parser, test_c: u8) !?[2]usize {
         const start = p.idx;
-        var len: usize = 0;
         while (true) {
             try p.peekAmt(1) orelse return null;
             const amt = std.mem.indexOfScalar(u8, p.slice(), test_c) orelse {
                 const left = p.avail();
-                len += left;
                 p.idx += left;
                 continue;
             };
-            len += amt;
             p.idx += amt;
-            return .{ start, len };
+            const end = p.idx;
+            return .{ start, end };
         }
     }
 
@@ -211,7 +209,7 @@ pub fn Mixin(comptime T: type) type {
             return pp.parser.trimByte(test_c);
         }
 
-        pub fn eatUntil(pp: *T, test_c: u8) !usize {
+        pub fn eatUntil(pp: *T, test_c: u8) !?[2]usize {
             return pp.parser.eatUntil(test_c);
         }
     };
