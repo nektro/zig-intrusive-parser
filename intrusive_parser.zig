@@ -132,6 +132,22 @@ pub const Parser = struct {
         }
     }
 
+    pub fn eatUntilStr(p: *Parser, test_s: []const u8) !?[2]usize {
+        const start = p.idx;
+        while (true) {
+            try p.peekAmt(1) orelse return null;
+            const amt = std.mem.indexOf(u8, p.slice(), test_s) orelse {
+                const left = p.avail();
+                p.idx += left;
+                continue;
+            };
+            p.idx += amt;
+            p.idx += test_s.len;
+            const end = p.idx;
+            return .{ start, end };
+        }
+    }
+
     // tag(u8) + len(u32) + bytes(N)
     pub fn addStr(p: *Parser, alloc: std.mem.Allocator, str: string) !usize {
         const adapter: AdapterStr = .{ .p = p };
@@ -212,6 +228,10 @@ pub fn Mixin(comptime T: type) type {
 
         pub fn eatUntil(pp: *T, test_c: u8) !?[2]usize {
             return pp.parser.eatUntil(test_c);
+        }
+
+        pub fn eatUntilStr(pp: *T, test_s: []const u8) !?[2]usize {
+            return pp.parser.eatUntilStr(test_s);
         }
     };
 }
