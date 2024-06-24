@@ -126,6 +126,7 @@ pub const Parser = struct {
                 continue;
             };
             p.idx += amt;
+            p.idx += 1;
             const end = p.idx;
             return .{ start, end };
         }
