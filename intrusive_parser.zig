@@ -28,11 +28,11 @@ pub const Parser = struct {
         p.strings_map.deinit(p.allocator);
     }
 
-    pub fn avail(p: *Parser) usize {
+    pub inline fn avail(p: *Parser) usize {
         return p.temp.items.len - p.idx;
     }
 
-    pub fn slice(p: *Parser) []const u8 {
+    pub inline fn slice(p: *Parser) []const u8 {
         return p.temp.items[p.idx..];
     }
 
