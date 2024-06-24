@@ -7,6 +7,7 @@ Core plumbing to make text or binary document parsers with Data Oriented Design
 ## Used by
 
 - https://github.com/nektro/zig-json
+- https://github.com/nektro/zig-webidl
 
 ## License
 
