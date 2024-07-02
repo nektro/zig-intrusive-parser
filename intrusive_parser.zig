@@ -182,6 +182,45 @@ pub const Parser = struct {
             return std.mem.eql(u8, a, b);
         }
     };
+
+    /// Similar to addStr but lets you change the tag so that new index types can be aliases and use the same intern storage
+    pub fn AddStrGeneric(comptime tag: u8) type {
+        return struct {
+            pub fn add(p: *Parser, alloc: std.mem.Allocator, str: string) !usize {
+                const adapter: Adapter = .{ .p = p };
+                const res = try p.strings_map.getOrPutAdapted(alloc, str, adapter);
+                if (res.found_existing) return res.value_ptr.*;
+                errdefer p.strings_map.orderedRemoveAt(res.index);
+                const r = p.data.items.len;
+                const l = str.len;
+                try p.data.ensureUnusedCapacity(alloc, 1 + 4 + l);
+                p.data.appendAssumeCapacity(tag);
+                p.data.appendSliceAssumeCapacity(&std.mem.toBytes(@as(u32, @intCast(l))));
+                p.data.appendSliceAssumeCapacity(str);
+                res.value_ptr.* = r;
+                return r;
+            }
+
+            const Adapter = struct {
+                p: *const Parser,
+
+                pub fn hash(ctx: @This(), a: string) u32 {
+                    _ = ctx;
+                    var hasher = std.hash.Wyhash.init(0);
+                    hasher.update(a);
+                    return @truncate(hasher.final());
+                }
+
+                pub fn eql(ctx: @This(), a: string, _: string, b_index: usize) bool {
+                    const i = ctx.p.strings_map.values()[b_index];
+                    std.debug.assert(ctx.p.data.items[i] == tag);
+                    const l: u32 = @bitCast(ctx.p.data.items[i..][1..][0..4].*);
+                    const b = ctx.p.data.items[i..][1..][4..][0..l];
+                    return std.mem.eql(u8, a, b);
+                }
+            };
+        };
+    }
 };
 
 pub fn Mixin(comptime T: type) type {
