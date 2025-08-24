@@ -1,9 +1,10 @@
 const std = @import("std");
 const string = []const u8;
 const extras = @import("extras");
+const nio = @import("nio");
 
 pub const Parser = struct {
-    any: std.io.AnyReader,
+    any: nio.AnyReadable,
     allocator: std.mem.Allocator,
     temp: std.ArrayListUnmanaged(u8) = .{},
     idx: usize = 0,
@@ -14,7 +15,7 @@ pub const Parser = struct {
     strings_map: std.StringArrayHashMapUnmanaged(usize) = .{},
     string_tag: u8,
 
-    pub fn init(allocator: std.mem.Allocator, any: std.io.AnyReader, string_tag: u8) Parser {
+    pub fn init(allocator: std.mem.Allocator, any: nio.AnyReadable, string_tag: u8) Parser {
         return .{
             .any = any,
             .allocator = allocator,

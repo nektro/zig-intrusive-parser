@@ -5,3 +5,4 @@ license: MPL-2.0
 description: Core plumbing to make text or binary document parsers with Data Oriented Design
 dependencies:
   - src: git https://github.com/nektro/zig-extras
+  - src: git https://github.com/nektro/zig-nio
