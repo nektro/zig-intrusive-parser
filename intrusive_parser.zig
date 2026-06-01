@@ -82,7 +82,7 @@ pub const Parser = struct {
     }
 
     pub fn eatAnyScalar(p: *Parser, test_s: string) !?u8 {
-        std.debug.assert(extras.matchesAll(u8, test_s, std.ascii.isASCII));
+        std.debug.assert(extras.matchesAll(u8, test_s, std.ascii.isAscii));
         try p.peekAmt(1) orelse return null;
         if (std.mem.indexOfScalar(u8, test_s, p.slice()[0])) |idx| {
             p.idx += 1;
