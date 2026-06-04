@@ -6,13 +6,13 @@ const nio = @import("nio");
 pub const Parser = struct {
     any: nio.AnyReadable,
     allocator: std.mem.Allocator,
-    temp: std.ArrayListUnmanaged(u8) = .{},
+    temp: std.ArrayListUnmanaged(u8) = .empty,
     idx: usize = 0,
     end: bool = false,
     line: usize = 1,
     col: usize = 1,
-    data: std.ArrayListUnmanaged(u8) = .{},
-    strings_map: std.StringArrayHashMapUnmanaged(usize) = .{},
+    data: std.ArrayListUnmanaged(u8) = .empty,
+    strings_map: std.StringArrayHashMapUnmanaged(usize) = .empty,
     string_tag: u8,
 
     pub fn init(allocator: std.mem.Allocator, any: nio.AnyReadable, string_tag: u8) Parser {
