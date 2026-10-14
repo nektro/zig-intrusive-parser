@@ -73,14 +73,9 @@ pub const Parser = struct {
         return null;
     }
 
-    pub fn eatAnyScalar(p: *Parser, test_s: string) !?u8 {
-        std.debug.assert(extras.matchesAll(u8, test_s, std.ascii.isAscii));
+    pub fn eatAnyScalar(p: *Parser, comptime test_s: string) !?u8 {
         try p.peekAmt(1) orelse return null;
-        if (std.mem.indexOfScalar(u8, test_s, p.slice()[0])) |idx| {
-            p.idx += 1;
-            return test_s[idx];
-        }
-        return null;
+        return p.swallowAny(test_s);
     }
 
     pub fn swallowByte(p: *Parser, test_c: u8) ?u8 {
@@ -95,6 +90,17 @@ pub const Parser = struct {
         }
         p.idx += test_s.len;
         return;
+    }
+
+    pub fn swallowAny(p: *Parser, comptime test_s: []const u8) ?u8 {
+        const c = p.slice()[0];
+        inline for (test_s, 0..) |elem, i| {
+            if (c == elem) {
+                p.idx += 1;
+                return test_s[i];
+            }
+        }
+        return null;
     }
 
     pub fn shift(p: *Parser) !u21 {
