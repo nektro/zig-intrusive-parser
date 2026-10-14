@@ -38,16 +38,8 @@ pub const Parser = struct {
     }
 
     pub fn eat(p: *Parser, comptime test_s: string) !?void {
-        if (test_s.len == 1) {
-            _ = try p.eatByte(test_s[0]);
-            return;
-        }
         try p.peekAmt(test_s.len) orelse return null;
-        if (std.mem.eql(u8, p.slice()[0..test_s.len], test_s)) {
-            p.idx += test_s.len;
-            return;
-        }
-        return null;
+        return p.swallowSlice(test_s);
     }
 
     pub fn peekAmt(p: *Parser, amt: usize) !?void {
@@ -95,6 +87,14 @@ pub const Parser = struct {
         if (p.slice()[0] != test_c) return null;
         p.idx += 1;
         return test_c;
+    }
+
+    pub fn swallowSlice(p: *Parser, comptime test_s: []const u8) ?void {
+        inline for (p.slice()[0..test_s.len], test_s) |a_elem, b_elem| {
+            if (a_elem != b_elem) return null;
+        }
+        p.idx += test_s.len;
+        return;
     }
 
     pub fn shift(p: *Parser) !u21 {
