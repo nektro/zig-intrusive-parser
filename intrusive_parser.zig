@@ -91,6 +91,12 @@ pub const Parser = struct {
         return null;
     }
 
+    pub fn swallowByte(p: *Parser, test_c: u8) ?u8 {
+        if (p.slice()[0] != test_c) return null;
+        p.idx += 1;
+        return test_c;
+    }
+
     pub fn shift(p: *Parser) !u21 {
         try p.peekAmt(1) orelse return error.EndOfStream;
         const len = std.unicode.utf8ByteSequenceLength(p.slice()[0]) catch return error.MalformedJson;
