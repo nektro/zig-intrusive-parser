@@ -50,7 +50,7 @@ pub const Parser = struct {
         return null;
     }
 
-    fn peekAmt(p: *Parser, amt: usize) !?void {
+    pub fn peekAmt(p: *Parser, amt: usize) !?void {
         if (p.avail() >= amt) return;
         const buf_size = std.heap.page_size_min;
         const diff_amt = amt - p.avail();
