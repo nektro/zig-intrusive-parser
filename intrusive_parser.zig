@@ -84,6 +84,19 @@ pub const Parser = struct {
         return p.swallowAnyNotR(test_s);
     }
 
+    pub fn eatRangeM(p: *Parser, comptime from: u21, comptime to: u21) !?u21 {
+        const from_len = comptime std.unicode.utf8CodepointSequenceLength(from) catch unreachable;
+        const to_len = comptime std.unicode.utf8CodepointSequenceLength(to) catch unreachable;
+        const amt = @max(from_len, to_len);
+        try p.peekAmt(amt) orelse return null;
+        const len = std.unicode.utf8ByteSequenceLength(p.slice()[0]) catch return null;
+        if (amt != len) return null;
+        const cp = std.unicode.utf8Decode(p.slice()[0..amt]) catch return null;
+        if (cp < from or cp > to) return null;
+        p.idx += len;
+        return cp;
+    }
+
     pub fn swallowByte(p: *Parser, test_c: u8) ?u8 {
         if (p.slice()[0] != test_c) return null;
         p.idx += 1;
