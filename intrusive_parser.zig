@@ -66,11 +66,7 @@ pub const Parser = struct {
 
     pub fn eatRange(p: *Parser, comptime from: u8, comptime to: u8) !?u8 {
         try p.peekAmt(1) orelse return null;
-        if (p.slice()[0] >= from and p.slice()[0] <= to) {
-            defer p.idx += 1;
-            return p.slice()[0];
-        }
-        return null;
+        return p.swallowRange(from, to);
     }
 
     pub fn eatAny(p: *Parser, comptime test_s: string) !?u8 {
@@ -125,6 +121,13 @@ pub const Parser = struct {
     pub fn swallowAnyNotR(p: *Parser, test_s: []const u8) ?u8 {
         const c = p.slice()[0];
         _ = std.mem.indexOfScalar(u8, test_s, c) orelse return null;
+        p.idx += 1;
+        return c;
+    }
+
+    pub fn swallowRange(p: *Parser, comptime from: u8, comptime to: u8) ?u8 {
+        const c = p.slice()[0];
+        if (c < from or c > to) return null;
         p.idx += 1;
         return c;
     }
