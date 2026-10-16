@@ -78,6 +78,16 @@ pub const Parser = struct {
         return p.swallowAny(test_s);
     }
 
+    pub fn eatAnyNot(p: *Parser, comptime test_s: string) !?u8 {
+        try p.peekAmt(1) orelse return null;
+        return p.swallowAnyNot(test_s);
+    }
+
+    pub fn eatAnyNotR(p: *Parser, test_s: string) !?u8 {
+        try p.peekAmt(1) orelse return null;
+        return p.swallowAnyNotR(test_s);
+    }
+
     pub fn swallowByte(p: *Parser, test_c: u8) ?u8 {
         if (p.slice()[0] != test_c) return null;
         p.idx += 1;
@@ -101,6 +111,22 @@ pub const Parser = struct {
             }
         }
         return null;
+    }
+
+    pub fn swallowAnyNot(p: *Parser, comptime test_s: []const u8) ?u8 {
+        const c = p.slice()[0];
+        inline for (test_s) |elem| {
+            if (c == elem) return null;
+        }
+        p.idx += 1;
+        return c;
+    }
+
+    pub fn swallowAnyNotR(p: *Parser, test_s: []const u8) ?u8 {
+        const c = p.slice()[0];
+        _ = std.mem.indexOfScalar(u8, test_s, c) orelse return null;
+        p.idx += 1;
+        return c;
     }
 
     pub fn shift(p: *Parser) !u21 {
