@@ -73,7 +73,7 @@ pub const Parser = struct {
         return null;
     }
 
-    pub fn eatAnyScalar(p: *Parser, comptime test_s: string) !?u8 {
+    pub fn eatAny(p: *Parser, comptime test_s: string) !?u8 {
         try p.peekAmt(1) orelse return null;
         return p.swallowAny(test_s);
     }
