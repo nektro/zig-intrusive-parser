@@ -2,11 +2,11 @@ const std = @import("std");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.option(std.builtin.OptimizeMode, "mode", "") orelse .Debug;
+    const optimize = b.standardOptimizeOption(.{});
     const disable_llvm = b.option(bool, "disable_llvm", "use the non-llvm zig codegen") orelse false;
 
     _ = target;
-    _ = mode;
+    _ = optimize;
     _ = disable_llvm;
 
     // this doesnt need tests since the consumers of this library do have tests
